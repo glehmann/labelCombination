@@ -114,6 +114,13 @@ public:
   /** End concept checking */
 #endif
 
+  /**
+   * Set/Get the value used as "background" in the images.
+   * Defaults to NumericTraits<PixelType>::Zero.
+   */
+  itkSetMacro(BackgroundValue, InputImagePixelType);
+  itkGetConstMacro(BackgroundValue, InputImagePixelType);
+
 protected:
   NaryLabelImageFilter()
     {
