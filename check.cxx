@@ -9,9 +9,9 @@
 int main(int argc, char * argv[])
 {
 
-  if( argc != 4 )
+  if( argc != 6 )
     {
-    std::cerr << "usage: " << argv[0] << " input1 input2 output" << std::endl;
+    std::cerr << "usage: " << argv[0] << " input1 input2 output bg shift" << std::endl;
     // std::cerr << "  : " << std::endl;
     exit(1);
     }
@@ -32,6 +32,8 @@ int main(int argc, char * argv[])
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetInput( 1, reader2->GetOutput() );
+  filter->SetBackgroundValue( atoi(argv[4]) );
+  filter->SetShift( atoi(argv[5]) );
 
   itk::SimpleFilterWatcher watcher(filter, "filter");
 

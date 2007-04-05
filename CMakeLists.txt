@@ -2,7 +2,8 @@
 PROJECT(labelCombination)
 
 # set the name of the input image used to run the test
-SET(INPUT_IMAGE ${CMAKE_SOURCE_DIR}/images/cthead1.png)
+SET(IMG1 ${CMAKE_SOURCE_DIR}/images/label1.png)
+SET(IMG2 ${CMAKE_SOURCE_DIR}/images/label2.png)
 
 #include some macros from another file...
 INCLUDE(IJMacros.txt)
@@ -81,7 +82,16 @@ ENDIF(BUILD_TESTING)
 #any tests you can comment out or delete the following line.
 # ADD_TEST(Testname ExecutableToRun arg1 arg2 arg3)
 
-ADD_TEST(Test ${TEST_COMMAND}
-   check ${INPUT_IMAGE} out.png
-   --compare out.png ${CMAKE_SOURCE_DIR}/images/test.png
-)
+
+FOREACH(bg 0 255)
+  ADD_TEST(Test-${bg} ${TEST_COMMAND}
+    check ${IMG1} ${IMG2} test-${bg}.png ${bg} 0
+    --compare test-${bg}.png ${CMAKE_SOURCE_DIR}/images/test-${bg}.png
+  )
+  FOREACH(fg 0 255)
+    ADD_TEST(BinaryTest-${bg}-${fg} ${TEST_COMMAND}
+      binary_check ${IMG1} ${IMG2} binary_test-${bg}-${fg}.png ${fg} ${bg}
+      --compare binary_test-${bg}-${fg}.png ${CMAKE_SOURCE_DIR}/images/binary_test-${bg}-${fg}.png
+    )
+  ENDFOREACH(fg)
+ENDFOREACH(bg)
