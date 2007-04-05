@@ -133,7 +133,7 @@ protected:
   NaryLabelImageFilter()
     {
     m_BackgroundValue = NumericTraits< InputImagePixelType >::Zero;
-    m_Shift = NumericTraits< InputImagePixelType >::Zero;
+    m_Shift = NumericTraits< OutputImagePixelType >::Zero;
     }
 
   virtual ~NaryLabelImageFilter() {}
@@ -148,8 +148,8 @@ protected:
   void PrintSelf( std::ostream& os, Indent indent) const
     {
     Superclass::PrintSelf( os, indent );
-    os << indent << "Background Value: " << m_BackgroundValue << std::endl;
-    os << indent << "Shift: " << m_Shift << std::endl;
+    os << indent << "Background Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
+    os << indent << "Shift: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_Shift) << std::endl;
     }
 
 
@@ -158,7 +158,7 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   InputImagePixelType m_BackgroundValue;
-  InputImagePixelType m_Shift;
+  OutputImagePixelType m_Shift;
 };
 
 } // end namespace itk
