@@ -119,11 +119,11 @@ public:
   itkSetMacro(BackgroundValue, InputImagePixelType);
   itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
-
-protected:
   itkSetMacro(Shift, InputImagePixelType);
   itkGetConstMacro(Shift, InputImagePixelType);
 
+
+protected:
   NaryLabelImageFilter()
     {
     m_BackgroundValue = NumericTraits< InputImagePixelType >::Zero;
