@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
   ReaderType::Pointer reader2 = ReaderType::New();
   reader2->SetFileName( argv[2] );
 
-  typedef itk::NaryLabelImageFilter< IType > FilterType;
+  typedef itk::NaryLabelImageFilter< IType, IType > FilterType;
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetInput( 1, reader2->GetOutput() );

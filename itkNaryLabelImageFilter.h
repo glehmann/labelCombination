@@ -54,22 +54,22 @@ namespace itk
 
 namespace Functor {  
   
-template< class TInput >
+template< class TInput, class TOutput >
 class NaryLabel
 {
 public:
   NaryLabel() {}
   ~NaryLabel() {}
-  inline TInput operator()( const std::vector< TInput > & B)
+  inline TOutput operator()( const std::vector< TInput > & B)
   {
     for( int i=B.size() - 1; i>=0 ; i-- )
       {
       if( B[i] != m_BackgroundValue )
         {
-        return B[i] + m_Shift * i;
+        return static_cast<TOutput>(B[i] + m_Shift * i);
         }
       }
-    return m_BackgroundValue;
+    return static_cast<TOutput>(m_BackgroundValue);
   }
 
   bool operator!= (const NaryLabel& n) const
@@ -78,20 +78,20 @@ public:
   }
 
   TInput m_BackgroundValue;
-  TInput m_Shift;
+  TOutput m_Shift;
 }; 
 }
-template <class TInputImage>
+template <class TInputImage, class TOutputImage>
 class ITK_EXPORT NaryLabelImageFilter :
     public
-NaryFunctorImageFilter<TInputImage,TInputImage, 
-                       Functor::NaryLabel<typename TInputImage::PixelType > > 
+NaryFunctorImageFilter<TInputImage, TOutputImage, 
+                       Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType > > 
 {
 public:
   /** Standard class typedefs. */
   typedef NaryLabelImageFilter  Self;
-  typedef NaryFunctorImageFilter<TInputImage,TInputImage, 
-                                 Functor::NaryLabel<typename TInputImage::PixelType > >  Superclass;
+  typedef NaryFunctorImageFilter<TInputImage, TOutputImage, 
+                       Functor::NaryLabel<typename TInputImage::PixelType, typename TOutputImage::PixelType > >   Superclass;
   typedef SmartPointer<Self>   Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
 
@@ -101,6 +101,12 @@ public:
   typedef typename InputImageType::ConstPointer    InputImageConstPointer;
   typedef typename InputImageType::RegionType      InputImageRegionType;
   typedef typename InputImageType::PixelType       InputImagePixelType;
+
+  typedef TOutputImage OutputImageType;
+  typedef typename OutputImageType::Pointer         OutputImagePointer;
+  typedef typename OutputImageType::ConstPointer    OutputImageConstPointer;
+  typedef typename OutputImageType::RegionType      OutputImageRegionType;
+  typedef typename OutputImageType::PixelType       OutputImagePixelType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
