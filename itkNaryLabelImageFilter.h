@@ -66,7 +66,7 @@ public:
       {
       if( B[i] != m_BackgroundValue )
         {
-        return B[i];
+        return B[i] + m_Shift * i;
         }
       }
     return m_BackgroundValue;
@@ -74,10 +74,11 @@ public:
 
   bool operator!= (const NaryLabel& n) const
   {
-    return n.m_BackgroundValue != m_BackgroundValue;
+    return n.m_BackgroundValue != m_BackgroundValue || n.m_Shift != m_Shift;
   }
 
   TInput m_BackgroundValue;
+  TInput m_Shift;
 }; 
 }
 template <class TInputImage>
@@ -122,9 +123,13 @@ public:
   itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
 protected:
+  itkSetMacro(Shift, InputImagePixelType);
+  itkGetConstMacro(Shift, InputImagePixelType);
+
   NaryLabelImageFilter()
     {
     m_BackgroundValue = NumericTraits< InputImagePixelType >::Zero;
+    m_Shift = NumericTraits< InputImagePixelType >::Zero;
     }
 
   virtual ~NaryLabelImageFilter() {}
@@ -132,6 +137,7 @@ protected:
   void GenerateData()
     {
     this->GetFunctor().m_BackgroundValue = m_BackgroundValue;
+    this->GetFunctor().m_Shift = m_Shift;
     Superclass::GenerateData();
     }
 
@@ -140,6 +146,7 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   InputImagePixelType m_BackgroundValue;
+  InputImagePixelType m_Shift;
 };
 
 } // end namespace itk
