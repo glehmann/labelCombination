@@ -122,6 +122,7 @@ public:
   itkSetMacro(BackgroundValue, InputImagePixelType);
   itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
+
 protected:
   itkSetMacro(Shift, InputImagePixelType);
   itkGetConstMacro(Shift, InputImagePixelType);
@@ -140,6 +141,14 @@ protected:
     this->GetFunctor().m_Shift = m_Shift;
     Superclass::GenerateData();
     }
+
+  void PrintSelf( std::ostream& os, Indent indent) const
+    {
+    Superclass::PrintSelf( os, indent );
+    os << indent << "Background Value: " << m_BackgroundValue << std::endl;
+    os << indent << "Shift: " << m_Shift << std::endl;
+    }
+
 
 private:
   NaryLabelImageFilter(const Self&); //purposely not implemented

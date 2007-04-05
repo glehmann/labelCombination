@@ -147,6 +147,7 @@ public:
   itkSetMacro(BackgroundValue, OutputImagePixelType);
   itkGetConstMacro(BackgroundValue, OutputImagePixelType);
 
+
 protected:
   NaryBinaryToLabelImageFilter()
     {
@@ -162,6 +163,14 @@ protected:
     this->GetFunctor().m_ForegroundValue = m_ForegroundValue;
     Superclass::GenerateData();
     }
+
+  void PrintSelf( std::ostream& os, Indent indent) const
+    {
+    Superclass::PrintSelf( os, indent );
+    os << indent << "Background Value: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
+    os << indent << "Foreground Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
+    }
+
 
 private:
   NaryBinaryToLabelImageFilter(const Self&); //purposely not implemented
