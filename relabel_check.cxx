@@ -34,7 +34,7 @@ int main(int argc, char * argv[])
   filter->SetInput( 1, reader2->GetOutput() );
   filter->SetBackgroundValue( atoi(argv[4]) );
 
-//  itk::SimpleFilterWatcher watcher(filter, "filter");
+  itk::SimpleFilterWatcher watcher(filter, "filter");
 
   typedef itk::ImageFileWriter< IType > WriterType;
   WriterType::Pointer writer = WriterType::New();

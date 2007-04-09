@@ -62,6 +62,9 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
       inputIterators.push_back( inputIt );
       }
     }
+    
+  // create the progress reporter
+  ProgressReporter progress(this, 0, outputRegionForThread.GetNumberOfPixels()*2*inputIterators.size() );
 
   // found the labels in the input images and compute their new value
   typedef std::vector< std::map< InputImagePixelType, OutputImagePixelType > > TranslatorType;
@@ -90,6 +93,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
         // TODO: throw an exception if the maximum number of labels is exceeded
         label++;
         }
+      progress.CompletedPixel();
       }
     }
 
@@ -123,8 +127,8 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
     for( unsigned int i=0; i<inputIterators.size(); i++ )
       {
       ++(*inputIterators[i]);
+      progress.CompletedPixel();
       }
-//    progress.CompletedPixel();
     }
   
   // delete the input iterators
