@@ -98,4 +98,8 @@ FOREACH(bg 0 255)
       --compare binary_test-${bg}-${fg}.png ${CMAKE_SOURCE_DIR}/images/binary_test-${bg}-${fg}.png
     )
   ENDFOREACH(fg)
+  ADD_TEST(RelabelTest-${bg} ${TEST_COMMAND}
+    relabel_check ${IMG1} ${IMG2} relabel_test-${bg}.png ${bg}
+    --compare relabel_test-${bg}.png ${CMAKE_SOURCE_DIR}/images/relabel_test-${bg}.png
+  )
 ENDFOREACH(bg)
