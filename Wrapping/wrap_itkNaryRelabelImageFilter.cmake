@@ -1,3 +1,3 @@
-WRAP_CLASS("itk::NaryLabelImageFilter" POINTER)
+WRAP_CLASS("itk::NaryRelabelImageFilter" POINTER)
   WRAP_IMAGE_FILTER_INT(2)
 END_WRAP_CLASS()
