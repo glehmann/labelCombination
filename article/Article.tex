@@ -169,8 +169,8 @@ consecutive. It then do the same with the second image, and give them the labels
 after the ones of the first image. It then do the same with the third image, etc.
 The new labels are then copied to the output image.
 Contrary to the previous filter, the user can't easily identify a label in the input image.
-However, he is sure to get only consecutive labels in the output image (if the is no labeled
-region collision), and no label collision.
+However, he is sure to get no label collision, and only consecutive labels in the output image
+(if there is no labeled region collision).
 
 \small \begin{verbatim}
 #include "itkImageFileReader.h"
@@ -308,11 +308,11 @@ tested with python.
 
 % \ref{cthead1}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics{cthead1}
-\caption{The input image.\label{cthead1}}
-\end{figure}
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics{cthead1}
+% \caption{The input image.\label{cthead1}}
+% \end{figure}
 
 
 \appendix
