@@ -9,9 +9,9 @@
 int main(int argc, char * argv[])
 {
 
-  if( argc != 5 )
+  if( argc != 6 )
     {
-    std::cerr << "usage: " << argv[0] << " input1 input2 output bg" << std::endl;
+    std::cerr << "usage: " << argv[0] << " input1 input2 output bg collision" << std::endl;
     // std::cerr << "  : " << std::endl;
     exit(1);
     }
@@ -33,6 +33,7 @@ int main(int argc, char * argv[])
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetInput( 1, reader2->GetOutput() );
   filter->SetBackgroundValue( atoi(argv[4]) );
+  filter->SetIgnoreCollision( atoi(argv[5]) );
 
   itk::SimpleFilterWatcher watcher(filter, "filter");
 

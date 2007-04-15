@@ -33,16 +33,17 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 % The title should be descriptive enough for people to be able to find
 % the relevant document. 
-\title{}
+\title{Combining labeled images with ITK}
 
 % Increment the release number whenever significant changes are made.
 % The author and/or editor can define 'significant' however they like.
-\release{0.00}
+% \release{0.00}
 
 % At minimum, give your name and an email address.  You can include a
 % snail-mail address if you like.
-\author{}
-\authoraddress{}
+\author{Ga\"etan Lehmann{$^2$}}
+\authoraddress{INRA, UMR 1198; ENVA; CNRS, FRE 2857, Biologie du D\'eveloppement et 
+Reproduction, Jouy en Josas, F-78350, France}
 
 \begin{document}
 \maketitle
@@ -54,11 +55,44 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 
 \begin{abstract}
 \noindent
-% The abstract should be a paragraph or two long, and describe the
-% scope of the document.
+Combining some labeled images is a quite common and useful task in image analysis.
+That's something we may want to do to prepare the markers for a watershed from
+markers for example, or to write the output of several segmentations in a single
+file.
+This article comes with three new filters to make the combination
+of labeled images easier with ITK.
 \end{abstract}
 
-\tableofcontents
+\section{How to combine the labels from several images}
+
+There are two major problems while combining the labels from several images:
+\begin{itemize}
+  \item avoiding the label collision. The input images may or may not compatibles labels.
+  The labels may be modified to avoid the collision, but it might be necessary to know
+  there exact value after the combination.
+  \begin{itemize}
+    \item The labels must be kept unchanged. The user must take care to avoid the collisions
+    by himself.
+    \item The labels can be modified, but the user must be able to identify them easily. The
+    simplest solution is to shift the label values according to the image number.
+    \item The labels can be fully modified. The images will be relabeled, all the first labels
+    will come from the first image, the next ones from the second image, etc. This method also
+    produce consecutive labels - often a desirable feature.
+  \end{itemize}
+
+  \item avoiding the labeled region collision. This is a much simple problem: an exception
+  can be throws when a collision occure, or we can choose to give a higher priority to a
+  label than the others. For this last point, the value of the label don't seem to be a good choice
+  because the labels are not supposed to be ordered. A better choice seems to be the image
+  number. By convention, let say that's the label from the last image.
+  
+\end{itemize}
+
+
+\section{Usage example}
+
+
+% \tableofcontents
 
 
 % \url{http://www.itk.org}

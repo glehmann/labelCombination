@@ -64,6 +64,7 @@ public:
   {
     TOutput v = NumericTraits< TOutput >::Zero;
     TOutput ret = m_BackgroundValue;
+    bool valueFound = false;
 
     for( int i=0; i<B.size(); i++ )
       {
@@ -75,7 +76,12 @@ public:
 
       if( B[i] == m_ForegroundValue )
         {
+        if( !m_IgnoreCollision && valueFound )
+          {
+          itkGenericExceptionMacro( << "Label collision detected." );
+          }
         ret = v;
+        valueFound = true;
         }
 
       v++;
@@ -91,8 +97,10 @@ public:
 
   TOutput m_BackgroundValue;
   TInput m_ForegroundValue;
+  bool m_IgnoreCollision;
 }; 
 }
+
 template <class TInputImage, class TOutputImage>
 class ITK_EXPORT NaryBinaryToLabelImageFilter :
     public
@@ -147,12 +155,16 @@ public:
   itkSetMacro(BackgroundValue, OutputImagePixelType);
   itkGetConstMacro(BackgroundValue, OutputImagePixelType);
 
+  itkSetMacro(IgnoreCollision, bool);
+  itkGetConstMacro(IgnoreCollision, bool);
+  itkBooleanMacro(IgnoreCollision);
 
 protected:
   NaryBinaryToLabelImageFilter()
     {
     m_BackgroundValue = NumericTraits< InputImagePixelType >::Zero;
     m_ForegroundValue = NumericTraits< InputImagePixelType >::max();
+    m_IgnoreCollision = true;
     }
 
   virtual ~NaryBinaryToLabelImageFilter() {}
@@ -161,6 +173,7 @@ protected:
     {
     this->GetFunctor().m_BackgroundValue = m_BackgroundValue;
     this->GetFunctor().m_ForegroundValue = m_ForegroundValue;
+    this->GetFunctor().m_IgnoreCollision = m_IgnoreCollision;
     Superclass::GenerateData();
     }
 
@@ -168,7 +181,8 @@ protected:
     {
     Superclass::PrintSelf( os, indent );
     os << indent << "Background Value: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
-    os << indent << "Foreground Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
+    os << indent << "Foreground Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_ForegroundValue) << std::endl;
+    os << indent << "Ignore Collision: " << static_cast<typename NumericTraits<bool>::PrintType>(m_IgnoreCollision) << std::endl;
     }
 
 
@@ -178,6 +192,7 @@ private:
 
   OutputImagePixelType m_BackgroundValue;
   InputImagePixelType m_ForegroundValue;
+  bool m_IgnoreCollision;
 };
 
 } // end namespace itk

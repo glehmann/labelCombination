@@ -87,16 +87,24 @@ public:
   itkSetMacro(BackgroundValue, InputImagePixelType);
   itkGetConstMacro(BackgroundValue, InputImagePixelType);
 
+  itkSetMacro(IgnoreCollision, bool);
+  itkGetConstMacro(IgnoreCollision, bool);
+  itkBooleanMacro(IgnoreCollision);
+
+
 protected:
   NaryRelabelImageFilter();
   virtual ~NaryRelabelImageFilter() {};
 
   void GenerateData();
 
+  void PrintSelf( std::ostream& os, Indent indent) const;
+
 private:
   NaryRelabelImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
   InputImagePixelType m_BackgroundValue;
+  bool m_IgnoreCollision;
 
 };
 

@@ -32,6 +32,7 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
 ::NaryRelabelImageFilter()
 {
   m_BackgroundValue = NumericTraits< InputImagePixelType >::Zero;
+  m_IgnoreCollision = true;
 }
 
 
@@ -110,13 +111,20 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
     {
     // find the output label
     OutputImagePixelType outputLabel = m_BackgroundValue;
-    for( int i=inputIterators.size()-1; i>=0; i-- )
+    bool labelFound = false;
+    
+    for( int i=0; i<inputIterators.size(); i++ )
       {
       const InputImagePixelType & v = inputIterators[i]->Get();
       if( v != m_BackgroundValue )
         {
+        if( !m_IgnoreCollision && labelFound )
+          {
+          itkExceptionMacro( << "Label collision detected." );
+          }
+
         outputLabel = translator[i][v];
-        break;
+        labelFound = true;
         }
       }
 
@@ -136,6 +144,17 @@ NaryRelabelImageFilter<TInputImage, TOutputImage>
     {
     delete inputIterators[i];
     }
+}
+
+
+template <class TInputImage, class TOutputImage>
+void
+NaryRelabelImageFilter<TInputImage, TOutputImage>
+::PrintSelf( std::ostream& os, Indent indent) const
+{
+  Superclass::PrintSelf( os, indent );
+  os << indent << "Background Value: " << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_BackgroundValue) << std::endl;
+  os << indent << "Ignore Collision: " << static_cast<typename NumericTraits<bool>::PrintType>(m_IgnoreCollision) << std::endl;
 }
 
 } // end namespace itk

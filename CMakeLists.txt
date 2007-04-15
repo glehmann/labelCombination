@@ -89,17 +89,17 @@ ENDIF(BUILD_TESTING)
 
 FOREACH(bg 0 255)
   ADD_TEST(Test-${bg} ${TEST_COMMAND}
-    check ${IMG1} ${IMG2} test-${bg}.png ${bg} 0
+    check ${IMG1} ${IMG2} test-${bg}.png ${bg} 0 1
     --compare test-${bg}.png ${CMAKE_SOURCE_DIR}/images/test-${bg}.png
   )
   FOREACH(fg 0 255)
     ADD_TEST(BinaryTest-${bg}-${fg} ${TEST_COMMAND}
-      binary_check ${IMG1} ${IMG2} binary_test-${bg}-${fg}.png ${fg} ${bg}
+      binary_check ${IMG1} ${IMG2} binary_test-${bg}-${fg}.png ${fg} ${bg} 1
       --compare binary_test-${bg}-${fg}.png ${CMAKE_SOURCE_DIR}/images/binary_test-${bg}-${fg}.png
     )
   ENDFOREACH(fg)
   ADD_TEST(RelabelTest-${bg} ${TEST_COMMAND}
-    relabel_check ${IMG1} ${IMG2} relabel_test-${bg}.png ${bg}
+    relabel_check ${IMG1} ${IMG2} relabel_test-${bg}.png ${bg} 1
     --compare relabel_test-${bg}.png ${CMAKE_SOURCE_DIR}/images/relabel_test-${bg}.png
   )
 ENDFOREACH(bg)
