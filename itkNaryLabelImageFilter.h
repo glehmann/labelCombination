@@ -24,32 +24,19 @@ namespace itk
 {
   
 /** \class NaryLabelImageFilter
- * \brief Implements an operator for pixel-wise addition of two images.
+ * \brief Label combination from several images
  *
- * This class is parametrized over the types of the two 
- * input images and the type of the output image. 
- * Numeric conversions (castings) are done by the C++ defaults.
- *
- * The pixel type of the input 1 image must have a valid defintion of
- * the operator+ with a pixel type of the image 2. This condition is 
- * required because internally this filter will perform the operation
- *
- *        pixel_from_image_1 + pixel_from_image_2
- *
- * Additionally the type resulting from the sum, will be cast to
- * the pixel type of the output image.
+ * This filter take all the labels which are not background pixels in all the input images, and
+ * put them in the output image. The labels may be shifted on a per image basis, by calling
+ * SetShift(OutputPixelType) with a value different of 0. By default, the labels are not shifted.
+ * This filter take one or more images as input, and produce a
+ * single output image.
+ * The SetIgnoreCollision(bool) method let the user choose to ignore the
+ * labeled region collision or not. By default, they are ignored.
+ * The SetBackgroundValue(OutputPixelType) let the user set the
+ * value of the background label.
  * 
- * The total operation over one pixel will be
- *
- *  output_pixel = static_cast<OutputPixelType>( input1_pixel + input2_pixel )
- *
- * For example, this filter could be used directly for adding images whose
- * pixels are vectors of the same dimension, and to store the resulting vector
- * in an output image of vector pixels.
- *
- * \warning No numeric overflow checking is performed in this filter.
- *
- * \ingroup IntensityImageFilters  Multithreaded
+ * \ingroup  Multithreaded
  */
 
 namespace Functor {  

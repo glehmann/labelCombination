@@ -61,6 +61,8 @@ markers for example, or to write the output of several segmentations in a single
 file.
 This article comes with three new filters to make the combination
 of labeled images easier with ITK.
+This contribution also try to provide a implementation much better integrated with the
+ITK pipeline model than the itkMultipleUnlabeledImagesToLabeledImageFilter contribution.
 \end{abstract}
 
 \section{How to combine the labels from several images}
@@ -89,7 +91,199 @@ There are two major problems while combining the labels from several images:
 \end{itemize}
 
 
-\section{Usage example}
+\section{Class description an usage examples}
+
+All the new filters provided with that article are subclassing the NaryFunctorImageFilter, or
+are implementing a similar interface. They all take one or more images as input, and produce a
+single output image.
+
+They also provide the SetIgnoreCollision(bool) method which let the user choose to ignore the
+labeled region collision or not. By default, they are ignored.
+
+Finally, they all provide the SetBackgroundValue(OutputPixelType) wich let the user set the
+value of the background label.
+
+\subsection{NaryLabelImageFilter}
+
+This filter take all the labels which are not background pixels in all the input images, and
+put them in the output image. The labels may be shifted on a per image basis, by calling
+SetShift(OutputPixelType) with a value different of 0. By default, the labels are not shifted.
+
+\small \begin{verbatim}
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkCommand.h"
+#include "itkSimpleFilterWatcher.h"
+
+#include "itkNaryLabelImageFilter.h"
+
+
+int main(int argc, char * argv[])
+{
+
+  if( argc != 7 )
+    {
+    std::cerr << "usage: " << argv[0] << " input1 input2 output bg shift collision" << std::endl;
+    // std::cerr << "  : " << std::endl;
+    exit(1);
+    }
+
+  const int dim = 2;
+  
+  typedef unsigned char PType;
+  typedef itk::Image< PType, dim > IType;
+
+  typedef itk::ImageFileReader< IType > ReaderType;
+  ReaderType::Pointer reader1 = ReaderType::New();
+  reader1->SetFileName( argv[1] );
+
+  ReaderType::Pointer reader2 = ReaderType::New();
+  reader2->SetFileName( argv[2] );
+
+  typedef itk::NaryLabelImageFilter< IType, IType > FilterType;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput( 1, reader2->GetOutput() );
+  filter->SetBackgroundValue( atoi(argv[4]) );
+  filter->SetShift( atoi(argv[5]) );
+  filter->SetIgnoreCollision( atoi(argv[6]) );
+
+  itk::SimpleFilterWatcher watcher(filter, "filter");
+
+  typedef itk::ImageFileWriter< IType > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( filter->GetOutput() );
+  writer->SetFileName( argv[3] );
+  writer->Update();
+
+  return 0;
+}
+\end{verbatim} \normalsize
+
+
+
+\subsection{NaryRelabelImageFilter}
+
+This filter search all the label in the image, and give them a new value so they are all
+consecutive. It then do the same with the second image, and give them the labels immediately
+after the ones of the first image. It then do the same with the third image, etc.
+The new labels are then copied to the output image.
+Contrary to the previous filter, the user can't easily identify a label in the input image.
+However, he is sure to get only consecutive labels in the output image (if the is no labeled
+region collision), and no label collision.
+
+\small \begin{verbatim}
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkCommand.h"
+#include "itkSimpleFilterWatcher.h"
+
+#include "itkNaryRelabelImageFilter.h"
+
+
+int main(int argc, char * argv[])
+{
+
+  if( argc != 6 )
+    {
+    std::cerr << "usage: " << argv[0] << " input1 input2 output bg collision" << std::endl;
+    // std::cerr << "  : " << std::endl;
+    exit(1);
+    }
+
+  const int dim = 2;
+  
+  typedef unsigned char PType;
+  typedef itk::Image< PType, dim > IType;
+
+  typedef itk::ImageFileReader< IType > ReaderType;
+  ReaderType::Pointer reader1 = ReaderType::New();
+  reader1->SetFileName( argv[1] );
+
+  ReaderType::Pointer reader2 = ReaderType::New();
+  reader2->SetFileName( argv[2] );
+
+  typedef itk::NaryRelabelImageFilter< IType, IType > FilterType;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput( 1, reader2->GetOutput() );
+  filter->SetBackgroundValue( atoi(argv[4]) );
+  filter->SetIgnoreCollision( atoi(argv[5]) );
+
+  itk::SimpleFilterWatcher watcher(filter, "filter");
+
+  typedef itk::ImageFileWriter< IType > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( filter->GetOutput() );
+  writer->SetFileName( argv[3] );
+  writer->Update();
+
+  return 0;
+}
+\end{verbatim} \normalsize
+
+
+\subsection{NaryBinaryToLabelImageFilter}
+
+This filter in very similar to the previous one, but for binary images. Only the pixels with
+the value set with SetForegroundValue(InputImageType) are considered to be an object. The other
+are background.
+
+\small \begin{verbatim}
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkCommand.h"
+#include "itkSimpleFilterWatcher.h"
+
+#include "itkNaryBinaryToLabelImageFilter.h"
+
+
+int main(int argc, char * argv[])
+{
+
+  if( argc != 7 )
+    {
+    std::cerr << "usage: " << argv[0] << " input1 input2 output bg fg collision" << std::endl;
+    // std::cerr << "  : " << std::endl;
+    exit(1);
+    }
+
+  const int dim = 2;
+  
+  typedef unsigned char PType;
+  typedef itk::Image< PType, dim > IType;
+
+  typedef itk::ImageFileReader< IType > ReaderType;
+  ReaderType::Pointer reader1 = ReaderType::New();
+  reader1->SetFileName( argv[1] );
+
+  ReaderType::Pointer reader2 = ReaderType::New();
+  reader2->SetFileName( argv[2] );
+
+  typedef itk::NaryBinaryToLabelImageFilter< IType, IType > FilterType;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput( 1, reader2->GetOutput() );
+  filter->SetBackgroundValue( atoi(argv[4]) );
+  filter->SetForegroundValue( atoi(argv[5]) );
+  filter->SetIgnoreCollision( atoi(argv[6]) );
+
+  itk::SimpleFilterWatcher watcher(filter, "filter");
+
+  typedef itk::ImageFileWriter< IType > WriterType;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( filter->GetOutput() );
+  writer->SetFileName( argv[3] );
+  writer->Update();
+
+  return 0;
+}
+\end{verbatim} \normalsize
+
+\section{Wrappers}
+
+As usual, the wrappers for WrapITK are provided with the sources, and have been sucessfully
+tested with python.
 
 
 % \tableofcontents

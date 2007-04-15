@@ -25,16 +25,23 @@ namespace itk
 {
   
 /** \class NaryRelabelImageFilter
- * \brief Implements pixel-wise generic operation of Nth similar images.
  *
- * This class is parameterized over the types of the input images
- * and the type of the output image.  It is also parameterized by the
- * operation to be applied.  A Functor style is used to represent the
- * function.
+ * \brief relabel an combine the labels from several inputs
  *
- * All the input images are of the same type.
+ * This filter search all the label in the image, and give them a new value so they are all
+ * consecutive. It then do the same with the second image, and give them the labels immediately
+ * after the ones of the first image. It then do the same with the third image, etc.
+ * The new labels are then copied to the output image.
+ * Contrary to NaryLabelImageFilter, the user can't easily identify a label in the input image.
+ * However, he is sure to get only consecutive labels in the output image (if the is no labeled
+ * region collision), and no label collision.
+ * This filter take one or more images as input, and produce a
+ * single output image.
+ * The SetIgnoreCollision(bool) method let the user choose to ignore the
+ * labeled region collision or not. By default, they are ignored.
+ * The SetBackgroundValue(OutputPixelType) let the user set the
+ * value of the background label.
  * 
- * \ingroup IntensityImageFilters   Multithreaded
  */
 
 template <class TInputImage, class TOutputImage >
