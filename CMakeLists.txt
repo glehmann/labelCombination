@@ -1,6 +1,9 @@
 #Change PROJECT_NAME to the name of your project
 PROJECT(labelCombination)
 
+# cpack stuff
+INCLUDE(CPack)
+
 # set the name of the input image used to run the test
 SET(IMG1 ${CMAKE_SOURCE_DIR}/images/label1.png)
 SET(IMG2 ${CMAKE_SOURCE_DIR}/images/label2.png)
